@@ -1,4 +1,7 @@
 import User from "../models/Usermodel.js";
+import crypto from "crypto";
+
+
 import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
 import bcrypt from "bcryptjs";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
@@ -77,9 +80,50 @@ export const verifyEmail = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    res.send("login route");
+    const { email, password } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Invalid email or password"});
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ success: false, message: "Invalid email or password"});
+        }
+        generateTokenAndSetCookie(res,user._id);
+
+        user.lastLogin = new Date();
+        await user.save();
+        res.status(200).json({
+            ...user._doc,
+            password: undefined,
+        })
+
+    } catch (error) {
+        console.log(error,"error occured")
+        res.status(400).JSON({success:false,message:error.message})
+    }
+
 };
 
 export const logout = async (req, res) => {
-    res.send("logout route");
+    res.clearCookie("token");
+    res.status(200).json({ success: true, message: "Logged out successfully" });
 };
+
+export const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+       const user = await User.findOne({email});
+       if(!user) return res.status(400).json({success:false,message:"Invalid email"})
+
+        // Generate reset token
+        const resetToken = crypto.randomBytes(20).toString("hex");
+        const resetTokenExpiresAt = Date.now()  + 1 * 60 * 60 * 1000; // 1 hour from now
+
+        
+
+    } catch (error) {
+        
+    }
+}
