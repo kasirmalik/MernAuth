@@ -121,9 +121,43 @@ export const forgotPassword = async (req, res) => {
         const resetToken = crypto.randomBytes(20).toString("hex");
         const resetTokenExpiresAt = Date.now()  + 1 * 60 * 60 * 1000; // 1 hour from now
 
-        
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpiresAt = resetTokenExpiresAt;
+
+        await user.save();
+
+        // send mail
+        await sendPasswordResetEmail(user.email,`${process.env.CLIENT_URL},rest-password/${resetToken}`);
+        res.status(200).json({success:true,message:"Reset token sent to your email"})
 
     } catch (error) {
-        
+        res.status(400).JSON({success:false,message:error.message})
+    }
+}
+
+export const resetPassword = async (req, res) => {
+    const { resetToken } = req.params;
+    const { password } = req.body;
+    try {
+        const user = await User.findOne({
+             resetPasswordToken: TokenExpiredError,
+             resetPasswordExpiresAt: { $lt: Date.now() }
+             });
+         if(!user){
+            return res.status(400).json({success:false,message:"Invalid reset token"})
+         };
+         // hash password
+         const hashedPassword = await bcrypt.hash(password, 10);
+         user.password = hashedPassword;
+         user.resetPasswordToken = undefined;
+         user.resetPasswordExpiresAt = undefined;
+         await user.save();
+
+         await sendPasswordResetSuccessEmail(user.email);
+         res.status(200).json({success:true,message:"Password reset successfully"})
+
+    } catch (error) {
+        console.log("Error occured in reset password", error);
+      res.status(400).json({success:false,message:error.message})  
     }
 }
