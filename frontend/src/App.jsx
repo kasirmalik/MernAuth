@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
 import SignUp from './pages/SignUp';
 import LoginPage from './pages/LoginPage';
+import EmailVerificationPage from './pages/EmailVerificationPage';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={"Home"} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/verify-email" element={<EmailVerificationPage />} />
         </Routes>
 
       </div>

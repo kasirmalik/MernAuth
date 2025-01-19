@@ -7,6 +7,7 @@ import Input from "../components/Input";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const isLoading = false;
 
   const handleLogin = (e)=>{
     // login logic here
@@ -50,11 +51,19 @@ const LoginPage = () => {
                     whileHover={{scale:1.02}}
                     whileTap={{scale:0.98}}
                     type='submit'
+                    disabled={isLoading}
                  >
-                    Login 
+                    {isLoading ? <Loader className="w-6 h-6 animate-spin  mx-auto" /> : "Login"}
                     
                 </motion.button>
           </form>
+      </div>
+      <div className="flex justify-center bg-gray-900 bg-opacity-50 py-4 px-8">
+        <p className="text-sm text-gray-400">
+          Don't have an account? 
+          <Link to="/signup" className="text-green-400 hover:underline"> Sign up</Link>
+        </p>
+
       </div>
     </motion.div>
   )
