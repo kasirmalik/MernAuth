@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import Input from '../components/Input';
 import {Mail, User,Lock} from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
 
 
 const SignUp = () => {
@@ -52,11 +54,30 @@ const SignUp = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 />
                 {/* password strength meter */}
+                <PasswordStrengthMeter password={password} />
 
-                <motion.button >
+                <motion.button 
+                  className='mt5 w-full py-3 bg-gradient-to-r from-green-400 to-emerald-500 text-white font-bold rounded-lg
+                    shadow-lg hover:from-green-500 hover:to-emerald-600 transition duration-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900
+                  '
+                    whileHover={{scale:1.05}}
+                    whileTap={{scale:0.95}}
+                    type='submit'
+                 >
                     Sign Up
+                    
                 </motion.button>
             </form>
+        </div>
+
+        <div className="px-8 py-4 bg-gray-900 bg-opacity-50 flex  text-center">
+            <p className='text-gray-400 text-sm'>
+                Already have an account? 
+                
+                <Link to='/login' className='text-green-500 hover:underline'>
+                   Login
+                </Link>
+            </p>
         </div>
       
     </motion.div>
