@@ -1,12 +1,16 @@
 import  { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuthStore } from '../store/authStore';
+import {toast} from 'react-hot-toast';
+
 
 const EmailVerificationPage = () => {
     const [code, setCode] = useState(["","","","","",""]);
     const inputRefs = useRef([]);
     const navigate = useNavigate();
-    const isLoading = false;
+  
+    const {error,isLoading,verifyEmail} =useAuthStore()
 
      const handleChange = (index,value) => {
         const newCode = [...code];
@@ -36,17 +40,22 @@ const EmailVerificationPage = () => {
                 inputRefs.current[index - 1].focus();
             }
      };
-        const handleSubmit = (e) => {
+        const handleSubmit = async(e) => {
             e.preventDefault();
             const verificationCode = code.join('');
-            alert(`Verifying ${verificationCode}`);
+            try {
+              await verifyEmail(verificationCode);
+              navigate('/');
+              toast.success("Email Verified Sucessfully")
+            } catch (error) {
+              console.log(error)
+            }
         }
      // auto submit the code if all inputs are filled
         useEffect(() => {
-            if(code.every(digit => digit !== '')) {
-                const verificationCode = code.join('');
-                handleSubmit(new Event('submit'));
-            }
+          if (code.every((digit) => digit !== "")) {
+            handleSubmit(new Event("submit"));
+          }
         }, [code]);
 
   return (
@@ -82,8 +91,8 @@ const EmailVerificationPage = () => {
                 
           </div>
           
-          
-        </form>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+        
         <motion.button
 
         whileHover={{scale:1.05}}
@@ -94,6 +103,7 @@ const EmailVerificationPage = () => {
         >
             {isLoading ? "verifying..." : "Verify"}
         </motion.button>
+        </form>
       </motion.div>
     </div>
   )
