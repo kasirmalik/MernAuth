@@ -9,6 +9,7 @@ import { useAuthStore } from './store/authStore';
 import { useEffect } from 'react';
 import DashboardPage from './pages/DashboardPage';
 import LoadingSpinner from './components/LoadingSpinner';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 
 // protected rotes that require authentication
@@ -33,7 +34,7 @@ const RedirectAuthenticatedUser = ({children})=>{
 }
 
 function App() {
-       const { isCheckingAuth,checkAuth,isAuthenticated,user } = useAuthStore();
+       const { isCheckingAuth,checkAuth, } = useAuthStore();
 
        useEffect(() => {
         checkAuth()
@@ -61,6 +62,9 @@ function App() {
             <LoginPage />
           </RedirectAuthenticatedUser>} />
           <Route path="/verify-email" element={<EmailVerificationPage />} />
+          <Route path="/forgot-password" element={ <RedirectAuthenticatedUser>
+            <ForgotPasswordPage />
+          </RedirectAuthenticatedUser>} />
         </Routes>
 
           <Toaster/>

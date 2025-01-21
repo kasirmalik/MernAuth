@@ -3,8 +3,10 @@ import { useAuthStore } from '../store/authStore';
 import { formatDate } from '../utils/date';
 
 const DashboardPage = () => {
-  const {user} =  useAuthStore();
-  const handleLogout = ()=>{}
+  const {user,logout} =  useAuthStore();
+  const handleLogout = ()=>{
+    logout()
+  }
   return (
     <motion.div
     initial={{ opacity: 0, scale: 0.9 }}
